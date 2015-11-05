@@ -1,0 +1,40 @@
+header.jumbotron
+
+div.row
+    div.span3
+        h2 New Products
+            div.accordion#accordion     
+            - if (typeof(products[0]) == 'undefined')
+                div.accordion-group
+                    div.accordion-heading
+                        em Glups, you don't have any product to be shown!
+            - else
+                - each product, i in products
+                    div.accordion-group
+                        div.accordion-heading
+                        a.accordion-toggle(data-toggle="collapse", data-parent="#accordion", href="##{product.id}")
+                            |#{product.title} 
+                            span.pull-right.muted #{product.price_range}          
+                    div(id="#{product.id}", class="accordion-body collapse")
+                        div.accordion-inner
+                        - if(product.images)
+                            - if(product.images.first)
+                                div.polaroid
+                                a(href="#modal-#{product.id}", data-toggle="modal")
+                                        img(src="#{product.images.first.medium}")
+
+                        p
+                            strong Type: 
+                            | #{product.product_type}
+
+                        p !{product.body_html}
+                        
+                        br
+
+                        div(id="#modal-#{product.id}", class="modal hide fade", style="display:none")
+                            div.modal-header
+                                a.close(data-dismiss="modal") ×
+                                h3=product.title
+                            div.modal-body
+     
+
