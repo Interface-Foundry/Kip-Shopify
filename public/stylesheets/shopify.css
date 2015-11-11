@@ -1,310 +1,515 @@
 /* SCSS
 ============================================================= */
+
+
 /* Mixins */
+
+
 /* Fonts */
+
+
 /* Colours */
+
+
 /* BOOTSTRAP OVERRIDES
 ============================================================= */
+
+
 /* line 28, ../../app/assets/stylesheets/shopify_app.css.scss */
-html, body {
-  background-color: #eee;
+
+html,
+body {
+    background-color: #fff;
+    /*color: #000;*/
 }
+
 
 /* line 29, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 body {
-  padding-top: 40px;
+    padding-top: 80px;
 }
+
 
 /* line 31, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 footer {
-  margin-top: 7px;
-  padding-top: 7px;
-  color: #aaa;
+    margin-top: 7px;
+    padding-top: 7px;
+    color: #fff;
 }
+
+.dividerz {
+    width: 50px;
+    height: auto;
+    display: inline-block;
+    margin-left: 50px;
+}
+
+.kip-button {
+    color: rgb(255, 255, 255);
+    border-radius: 2px;
+    background-color: rgb(86, 73, 216);
+    height: 55px;
+    width: 113.75px;
+    text-align: center;
+    /*font-weight: 700;*/
+    font-family: Open Sans, arial, sans-serif;
+    /*letter-spacing: 0.9px;*/
+    /*line-height: 27px;*/
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    align-items: center;
+    align-content: center;
+    /*justify-content: center;*/
+    top: -10px;
+    margin-top: -6px;
+}
+
+.large-link-button {
+  line-height: 1;
+    color: #251998;
+    font-size: 200%;
+    background: none!important;
+    border: none;
+    padding: 25px;
+    /*font: inherit;*/
+    /*cursor: pointer;*/
+    margin-left: 50px;
+    margin-right: 50px;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    /*font-weight: normal;*/
+    /*position:fixed;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -50%);*/
+}
+
+.link-button {
+    background: none!important;
+    border: none;
+    padding: 0!important;
+    font: inherit;
+    /*border is optional*/
+    /*border-bottom:1px solid #444; */
+    cursor: pointer;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
 
 /* line 33, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 a {
-  color: #40a1c9;
+    color: #40a1c9;
 }
+
+
 /* line 34, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 a:hover {
-  color: #2a8eb7;
-  text-decoration: none;
+    color: #2a8eb7;
+    text-decoration: none;
 }
+
 
 /* line 37, ../../app/assets/stylesheets/shopify_app.css.scss */
-.dropdown-menu li > a:hover, .dropdown-menu .active > a, .dropdown-menu .active > a:hover {
-  background-color: #40a1c9 !important;
+
+.dropdown-menu li > a:hover,
+.dropdown-menu .active > a,
+.dropdown-menu .active > a:hover {
+    background-color: #40a1c9 !important;
 }
+
+
 /* line 39, ../../app/assets/stylesheets/shopify_app.css.scss */
-.dropdown-menu li > a:hover [class^="icon-"], .dropdown-menu .active > a [class^="icon-"], .dropdown-menu .active > a:hover [class^="icon-"] {
-  background-image: url("/img/glyphicons-halflings-white.png");
+
+.dropdown-menu li > a:hover [class^="icon-"],
+.dropdown-menu .active > a [class^="icon-"],
+.dropdown-menu .active > a:hover [class^="icon-"] {
+    background-image: url("/img/glyphicons-halflings-white.png");
 }
+
 
 /* line 43, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .container > footer p {
-  text-align: center;
+    text-align: center;
 }
+
+
 /* line 44, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .container > .content {
-  background-color: #fff;
-  padding: 20px;
-  margin: 0 -20px;
-  -webkit-border-radius: 0 0 6px 6px;
-  -moz-border-radius: 0 0 6px 6px;
-  border-radius: 0 0 6px 6px;
-  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    background-color: #fff;
+    padding: 90px;
+    margin: 0 -20px;
+    -webkit-border-radius: 0 0 6px 6px;
+    -moz-border-radius: 0 0 6px 6px;
+    border-radius: 0 0 6px 6px;
+    -/*moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    box*/
+    -shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
+
 
 /* line 47, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .page-header h1 {
-  color: #40a1c9;
+    color: #40a1c9;
 }
+
 
 /* line 49, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .content {
-  min-height: 500px;
+    min-height: 500px;
 }
+
 
 /* line 51, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 [class^="icon-"] {
-  background-image: url("/img/glyphicons-halflings.png");
+    background-image: url("/img/glyphicons-halflings.png");
 }
+
 
 /* line 53, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .icon-white {
-  background-image: url("/img/glyphicons-halflings-white.png");
+    background-image: url("/img/glyphicons-halflings-white.png");
 }
+
+.kip-logo {
+    width: 60px;
+    height: 60px;
+    float: left;
+    display: block;
+}
+
 
 /* line 56, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .navbar .brand {
-  color: #fff;
+    color: #000;
+    font-family: Open Sans, arial, sans-serif;
+    display: block;
+    -webkit-margin-before: 0.67em;
+    -webkit-margin-after: 0.67em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
 }
+
+
 /* line 57, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .navbar .navbar-inner {
-  background-image: none;
-  background-color: #000;
-  box-shadow: none;
+    background-image: none;
+    background-color: #fff;
+    box-shadow: none;
 }
+
+
 /* line 58, ../../app/assets/stylesheets/shopify_app.css.scss */
-.navbar .nav > li.active > a, .navbar .nav > li.active > a:hover {
-  background-color: #222;
+
+.navbar .nav > li.active > a,
+.navbar .nav > li.active > a:hover {
+    background-color: #222;
 }
+
+
 /* line 59, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .navbar p a {
-  color: #ffffff;
+    color: black;
+    /*vertical-align: text-bottom;*/
+    /*display: table-cell;*/
 }
+
 
 /* line 62, ../../app/assets/stylesheets/shopify_app.css.scss */
-.navbar .nav > li > a:hover, .navbar .dropdown-menu a:hover {
-  background-color: #171717;
+
+.navbar .nav > li > a:hover,
+.navbar .dropdown-menu a:hover {
+    background-color: #171717;
 }
+
 
 /* line 64, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .btn-navbar {
-  background-color: #111;
-  background-image: none;
-  border-color: #222;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
+    background-color: #111;
+    background-image: none;
+    border-color: #222;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
 }
+
 
 /* line 72, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .btn-navbar:hover {
-  border-color: #333;
+    border-color: #000;
 }
+
 
 /* line 73, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .btn-navbar:before {
-  opacity: 0;
+    opacity: 0;
 }
+
 
 /* line 75, ../../app/assets/stylesheets/shopify_app.css.scss */
-input:focus, textarea:focus {
-  border-color: rgba(64, 161, 201, 0.8);
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(64, 161, 201, 0.6);
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(64, 161, 201, 0.6);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(64, 161, 201, 0.6);
+
+input:focus,
+textarea:focus {
+    border-color: rgba(64, 161, 201, 0.8);
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(64, 161, 201, 0.6);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(64, 161, 201, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(64, 161, 201, 0.6);
 }
+
 
 /* line 82, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 input[type=text].btn-large {
-  height: 20px;
+    height: 20px;
 }
 
+
 /* line 84, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 a.thumbnail:hover {
-  border-color: rgba(64, 161, 201, 0.8);
-  -webkit-box-shadow: 0 1px 4px rgba(64, 161, 201, 0.25);
-  -moz-box-shadow: 0 1px 4px rgba(64, 161, 201, 0.25);
-  box-shadow: 0 1px 4px rgba(64, 161, 201, 0.25);
+    border-color: rgba(64, 161, 201, 0.8);
+    -webkit-box-shadow: 0 1px 4px rgba(64, 161, 201, 0.25);
+    -moz-box-shadow: 0 1px 4px rgba(64, 161, 201, 0.25);
+    box-shadow: 0 1px 4px rgba(64, 161, 201, 0.25);
 }
 
 @media (max-width: 768px) {
-  /* line 92, ../../app/assets/stylesheets/shopify_app.css.scss */
-  .container > .content {
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    border-radius: 0;
-  }
+    /* line 92, ../../app/assets/stylesheets/shopify_app.css.scss */
+    .container > .content {
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        border-radius: 0;
+        margin-top: 250;
+    }
 }
+
 @media (max-width: 980px) {
-  /* line 96, ../../app/assets/stylesheets/shopify_app.css.scss */
-  body {
-    padding-top: 0px !important;
-  }
-
-  /* line 97, ../../app/assets/stylesheets/shopify_app.css.scss */
-  .navbar .nav.pull-right {
-    display: none;
-  }
-
-  /* line 98, ../../app/assets/stylesheets/shopify_app.css.scss */
-  .navbar-fixed-top {
-    margin: 0;
-  }
+    /* line 96, ../../app/assets/stylesheets/shopify_app.css.scss */
+    body {
+        padding-top: 0px !important;
+    }
+    /* line 97, ../../app/assets/stylesheets/shopify_app.css.scss */
+    .navbar .nav.pull-right {
+        display: none;
+    }
+    /* line 98, ../../app/assets/stylesheets/shopify_app.css.scss */
+    .navbar-fixed-top {
+        margin: 0;
+    }
 }
+
+
 /* APP CSS
 ============================================================= */
+
+
 /* General */
+
+
 /* line 105, ../../app/assets/stylesheets/shopify_app.css.scss */
-h1, h2, h3, h4, h5, h6, .brand {
-  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: normal;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.brand {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: normal;
 }
+
+
 /* line 108, ../../app/assets/stylesheets/shopify_app.css.scss */
-h1 small, h2 small, h3 small, h4 small, h5 small, h6 small, .brand small {
-  letter-spacing: 0px;
+
+h1 small,
+h2 small,
+h3 small,
+h4 small,
+h5 small,
+h6 small,
+.brand small {
+    letter-spacing: 0px;
 }
+
 
 /* line 111, ../../app/assets/stylesheets/shopify_app.css.scss */
-h1, h2 {
-  letter-spacing: -1px;
+
+h1,
+h2 {
+    letter-spacing: -1px;
 }
+
 
 /* line 113, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .polaroid {
-  float: right;
-  display: block;
-  padding: 20px;
-  margin: 0 0 50px 50px;
-  border: 1px solid #ccc;
-  border: 1px solid #fff;
-  background: #f5f5f5;
-  background-image: -o-linear-gradient(#f5f5f5, #f0f0f0);
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #f5f5f5), color-stop(1, #f0f0f0));
-  background-image: -moz-linear-gradient(center bottom, #f5f5f5 0%, #f0f0f0 100%);
-  background-image: linear-gradient(top, #f5f5f5, #f0f0f0);
-  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
+    float: right;
+    display: block;
+    padding: 20px;
+    margin: 0 0 50px 50px;
+    border: 1px solid #ccc;
+    border: 1px solid #fff;
+    background: #f5f5f5;
+    background-image: -o-linear-gradient(#f5f5f5, #f0f0f0);
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #f5f5f5), color-stop(1, #f0f0f0));
+    background-image: -moz-linear-gradient(center bottom, #f5f5f5 0%, #f0f0f0 100%);
+    background-image: linear-gradient(top, #f5f5f5, #f0f0f0);
+    -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
 }
+
 
 /* line 119, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 #login-header {
-  border-bottom: none;
+    border-bottom: none;
 }
+
+
 /* line 120, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 #login-header h1 {
-  text-align: center;
+    text-align: center;
 }
+
 
 /* Optional Bootstrap Overrides */
+
+
 /* line 124, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .accordion-body {
-  background: #f9f9f9;
+    background: #fff;
 }
+
+
 /* line 126, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .accordion-body .accordion-inner {
-  padding: 20px;
+    padding: 20px;
 }
+
+
 /* line 127, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .accordion-body .accordion-inner img {
-  border: 1px solid rgba(0, 0, 0, 0.07);
+    /*border: 1px solid rgba(0, 0, 0, 0.07);*/
 }
+
 
 /* line 131, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .modal {
-  max-height: 700px;
-  width: auto;
+    max-height: 700px;
+    width: auto;
 }
+
+
 /* line 132, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .modal .modal-body {
-  text-align: center;
+    text-align: center;
 }
+
 
 /* "Where do I start?" header -- you can delete this safely (all the way to the bottom) */
+
+
 /* line 136, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .jumbotron {
-  background: #222;
-  margin: -20px -20px 20px -20px;
-  position: relative;
+    background: #222;
+    margin: -20px -20px 20px -20px;
+    position: relative;
 }
+
 
 /* line 137, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .jumbotron h1 {
-  font-size: 54px;
-  line-height: 1;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    font-size: 54px;
+    line-height: 1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
+
 
 /* line 138, ../../app/assets/stylesheets/shopify_app.css.scss */
-.jumbotron h1, .jumbotron p {
-  margin-right: 0;
-  margin-bottom: 9px;
-  color: #fff;
-  text-align: center;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+
+.jumbotron h1,
+.jumbotron p {
+    margin-right: 0;
+    margin-bottom: 9px;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 
+
 /* line 139, ../../app/assets/stylesheets/shopify_app.css.scss */
+
 .jumbotron .inner {
-  background: transparent url("/img/grid-18px.png") top center;
-  padding: 45px 0;
-  -webkit-box-shadow: inset 0 -20px 300px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: inset 0 -20px 300px rgba(0, 0, 0, 0.4);
+    background: transparent url("/img/grid-18px.png") top center;
+    padding: 45px 0;
+    -webkit-box-shadow: inset 0 -20px 300px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: inset 0 -20px 300px rgba(0, 0, 0, 0.4);
 }
 
 @media (max-width: 480px) {
-  /* line 143, ../../app/assets/stylesheets/shopify_app.css.scss */
-  .jumbotron h1, .jumbotron p {
-    text-align: center;
-    margin-right: 0;
-  }
-
-  /* line 144, ../../app/assets/stylesheets/shopify_app.css.scss */
-  .jumbotron h1 {
-    font-size: 45px;
-    margin-right: 0;
-  }
-
-  /* line 145, ../../app/assets/stylesheets/shopify_app.css.scss */
-  .jumbotron p {
-    margin-right: 0;
-    font-size: 18px;
-    line-height: 24px;
-  }
+    /* line 143, ../../app/assets/stylesheets/shopify_app.css.scss */
+    .jumbotron h1,
+    .jumbotron p {
+        text-align: center;
+        margin-right: 0;
+    }
+    /* line 144, ../../app/assets/stylesheets/shopify_app.css.scss */
+    .jumbotron h1 {
+        font-size: 45px;
+        margin-right: 0;
+    }
+    /* line 145, ../../app/assets/stylesheets/shopify_app.css.scss */
+    .jumbotron p {
+        margin-right: 0;
+        font-size: 18px;
+        line-height: 24px;
+    }
 }
+
 @media (min-width: 480px) and (max-width: 768px) {
-  /* line 147, ../../app/assets/stylesheets/shopify_app.css.scss */
-  .jumbotron h1 {
-    font-size: 54px;
-  }
-
-  /* line 148, ../../app/assets/stylesheets/shopify_app.css.scss */
-  .jumbotron h1, .jumbotron p {
-    margin-right: 0;
-  }
+    /* line 147, ../../app/assets/stylesheets/shopify_app.css.scss */
+    .jumbotron h1 {
+        font-size: 54px;
+    }
+    /* line 148, ../../app/assets/stylesheets/shopify_app.css.scss */
+    .jumbotron h1,
+    .jumbotron p {
+        margin-right: 0;
+    }
 }
+
 @media (min-width: 768px) and (max-width: 940px) {
-  /* line 150, ../../app/assets/stylesheets/shopify_app.css.scss */
-  .jumbotron h1 {
-    font-size: 72px;
-  }
+    /* line 150, ../../app/assets/stylesheets/shopify_app.css.scss */
+    .jumbotron h1 {
+        font-size: 72px;
+    }
 }

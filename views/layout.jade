@@ -16,14 +16,15 @@ html
     div.navbar.navbar-fixed-top
         div.navbar-inner
             div.container
-
-                a(href="/", class="brand") Add your products to Kipsearch.com!
+                a(href="http://www.kipsearch.com", class="brand")
+                    img(src="/img/kip_logo_purp.svg", class="kip-logo", style="width:100px;height:100px")
+                a(href="http://www.kipsearch.com", class="brand", style="margin-top:50px") Search for clothes in IRL stores around you
 
                 - if (typeof(current_shop) != 'undefined')
                     div.nav-collapse
                         ul.nav.pull-right
                             li.dropdown
-                                a.shop_name.dropdown-toggle(data-toggle='dropdown', href="#" )=current_shop
+                                a.shop_name.dropdown-toggle(data-toggle='dropdown', href="#" )= current_shop
                                 ul.dropdown-menu
                                     li
                                         a(href="http://#{current_shop}", target = 'blank')
@@ -51,4 +52,4 @@ html
     div.container
         div.content!= body
         footer
-            p A Shopify app by (Developer name here)
+            

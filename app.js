@@ -2,6 +2,12 @@
  * Module dependencies.
  */
 
+
+//AUTOMATICALLY UPDATE INVENTORY DAILY
+//
+//INPUT FORM FOR USERS TO ENTER PHYSICAL STORE OR CHOOSE ONLINE ONLY OPTION
+//
+
 var express = require('express'),
     routes = require('./routes')
 
@@ -15,6 +21,8 @@ var db = require('./db')
 var async = require('async');
 var Promise = require('bluebird');
 var uniquer = require('./uniquer');
+var tagParser = require('./tagParser');
+var upload = require('./upload')
 
 //If Heroku or Foreman
 if (process.env.SHOPIFY_API_KEY != undefined && process.env.SHOPIFY_SECRET != undefined) {
@@ -52,15 +60,20 @@ app.configure('production', function() {
     app.use(express.errorHandler());
 });
 
+app.use(require('prerender-node').set('prerenderServiceUrl', 'http://127.0.1.1:4000'));
+app.use(require('prerender-node').set('protocol', 'https'));
+
 // Routes
 app.get('/', function(req, res) {
     var shop = undefined,
         key = undefined;
+    homelink = undefined;
 
     if (req.session.shopify) {
         shop = req.session.shopify.shop;
-        console.log('shop stored in user session:', shop);
+        console.log('shop stored in user session:', req.session);
         key = persistentKeys[shop];
+        homelink = 'http://' + shop + '.myshopify.com';
     }
 
     if (req.query.shop) {
@@ -75,7 +88,72 @@ app.get('/', function(req, res) {
             console.log('session is valid for <', shop, '>')
 
             session.order.all({
-                limit: 5
+                // limit: 5
+            }, function(err, orders) {
+                // console.log('req.session:', req.session);
+                if (err) {
+                    console.log('82: ', err)
+                    return res.send(500);
+                }
+
+                session.product.all({
+                    // limit: 10000
+                }, function(err, products) {
+                    console.log("Products:", products.length);
+                    if (err) {
+                        console.log('There are no products!', err)
+                        return res.send(404)
+                    }
+
+                    res.render("index", {
+                        title: "Kipsearch Shopify",
+                        current_shop: shop,
+                        orders: orders,
+                        products: products,
+                        homelink: homelink
+                    });
+
+
+                });
+
+            });
+        }
+    } else {
+        console.log('session is not valid yet, we need some authentication !')
+        if (shop !== undefined)
+            res.redirect('/login/authenticate?shop=' + shop);
+        else
+            res.redirect('/login')
+    }
+});
+
+
+
+app.get('/add', function(req, res) {
+    var shop = undefined,
+        key = undefined;
+    homelink = undefined;
+
+    if (req.session.shopify) {
+        shop = req.session.shopify.shop;
+        // console.log('shop stored in user session:', shop);
+        key = persistentKeys[shop];
+        homelink = 'http://' + shop + '.myshopify.com';
+    }
+
+    if (req.query.shop) {
+        shop = req.query.shop.replace(".myshopify.com", '');
+        console.log('shop given by query:', shop);
+        key = persistentKeys[shop];
+    }
+
+    if (shop !== undefined && key != undefined) {
+        session = nodify.createSession(shop, apiKey, secret, key);
+        if (session.valid()) {
+            console.log('session is valid for <', shop, '>')
+
+            session.order.all({
+                // limit: 5
             }, function(err, orders) {
                 // console.log('req.session:', req.session);
                 if (err) {
@@ -83,113 +161,153 @@ app.get('/', function(req, res) {
                 }
 
                 session.product.all({
-                    limit: 5
+                    // limit: 10000
                 }, function(err, products) {
-                    console.log("products:", products);
+                    // console.log("Products:", products.length);
                     if (err) {
-                        throw err;
+                        console.log('There are no products!', err)
+                        return res.send(404)
                     }
 
                     async.eachSeries(products, function iterator(product, finishedProduct) {
-                        // console.log('product.variants: ',product.variants)
+                        console.log('Product: ', JSON.stringify(product));
 
-                        async.eachSeries(product.variants, function itertor(variant, finishedVariant) {
+                        var productTags = []
+                        productTags = productTags.concat(product.tags.split(' '))
+                        productTags.push(product.vendor)
+                        productTags.push('Shopify')
+                        if (product.productType !== '') {
+                            productTags.push(product.productType);
+                        }
+                        if (product.variants.length < 1 || !product.variants) {
+                            console.log('This product has no variants.');
+                            return finishedProduct();
+                        }
 
-                            //Check if this item exists
-                            db.Landmarks.findOne({
-                                'id': variant.id,
-                                'linkback': req.session.shopify.shop   + '.myshopify.com',
-                                'linkbackname': 'shopify.com'
-                            }, function(err, match) {
-                                if (err) {
-                                    console.log('103: ', err)
-                                    return finishedVariant();
-                                }
-                                if (!match) {
-                                    //Create new item for each store in inventory list.
-                                    var i = new db.Landmark();
-                                    // i.parents = updatedInv[0];
-                                    i.loc.coordinates = [[0,90]];
-                                    i.parents = []
-                                    i.world = false;
-                                    // i.source_generic_item = item;
-                                    // delete i.source_generic_item.storeIds;
-                                    i.price = parseFloat(variant.price);
-                                    i.itemImageURL = variant.images;
-                                    i.name = variant.title.replace(/[^\w\s]/gi, '');
-                                    // i.owner = owner;
-                                    i.linkback = req.session.shopify.shop  + '.myshopify.com';
-                                    i.linkbackname = 'myshopify.com';
-                                    // var tags = i.name.split(' ').map(function(word) {
-                                    // return word.toString().toLowerCase()
-                                    // });
-                                    // tags = tags.concat(item.descriptionTags);
-                                    // tags.forEach(function(tag) {
-                                    // i.itemTags.text.push(tag)
-                                    // });
-                                    // i.itemTags.text.push('Macys');
-                                    // i.itemTags.text.push(cat)
-                                    try {
-                                        // i.itemTags.text = tagParser.parse(i.itemTags.text)
-                                    } catch (err) {
-                                        // console.log('tagParser error: ', err)
-                                    }
-                                    i.hasloc = true;
-                                    i.loc.type = 'MultiPoint';
-                                    if (!i.name) {
-                                        i.name = 'Shopify'
-                                    }
-                                    i.id = variant.id;
-                                    i.save(function(e, item) {
-                                        if (e) {
-                                            console.log('452: ', e);
-                                        } else {
-                                            // savedItems.push(item)
-                                            console.log('Saved: ', item)
-                                        }
+                        var awsImages = []
 
-                                        wait(finishedVariant, 1000);
+                        function getImages(product) {
+                            return new Promise(function(resolve, reject) {
+                                if (product.images && product.images.length > 0) {
+                                    var tempImgs = product.images.map(function(obj) {
+                                        return obj.src
                                     })
-
-
-                                } else if (match) {
-
-                                	console.log('Item exists! : ',match)
-                                    // db.Landmarks.findOne({
-                                    //     '_id': match._id,
-                                    //     'linkbackname': 'shopify.com'
-                                    // }).update({
-                                    //     $set: {
-                                    //         'parents': updatedInv[0],
-                                    //         'loc.coordinates': updatedInv[1],
-                                    //         'updated_time': new Date()
-                                    //     }
-                                    // }, function(e, result) {
-                                    //     if (e) {
-                                    //         console.log('Inventory update error: ', e)
-                                    //     }
-                                    //     // console.log('Updated inventory for item:', match.id)
-                                    //     wait(callback, 1000);
-                                    // })
+                                    upload.uploadPictures('shopify_' + product.id.toString().trim() + product.title.replace(/\s/g, '_'), tempImgs).then(function(images) {
+                                        awsImages = images;
+                                        resolve(awsImages)
+                                    }).catch(function(err) {
+                                        if (err) console.log('Image upload error: ', err);
+                                        resolve()
+                                    })
                                 }
+                            })
+                        }
+
+                        getImages(product).then(function(awsImages) {
+                            async.eachSeries(product.variants, function itertor(variant, finishedVariant) {
+
+                                // console.log('Variant: ', variant.title)
+
+                                //Check if this item exists
+                                db.Landmarks.findOne({
+                                    'id': variant.id.toString().trim(),
+                                    'linkback': req.session.shopify.shop + '.myshopify.com',
+                                    'linkbackname': 'myshopify.com'
+                                }, function(err, match) {
+                                    if (err) {
+                                        console.log('103: ', err)
+                                        return finishedVariant();
+                                    }
+                                    if (!match) {
+                                        //Create new item for each store in inventory list.
+                                        var i = new db.Landmark();
+                                        i.itemImageURL = awsImages;
+                                        // i.parents = updatedInv[0];
+                                       
+                                        //Lets put online-only stuff in the south-pole, will have to modify search to include south-pole results universally
+                                        i.loc.type = 'MultiPoint'
+                                        i.loc.coordinates = [
+                                            [0, -90]
+                                        ];
+                                        i.parents = []
+                                        i.world = false;
+                                        i.price = parseFloat(variant.price);
+
+                                        if (variant.title !== 'Default Title') {
+                                            i.name = variant.title.replace(/[^\w\s]/gi, '');
+                                        } else {
+                                            i.name = product.title
+                                        }
+                                        i.linkback = req.session.shopify.shop + '.myshopify.com';
+                                        i.linkbackname = 'myshopify.com';
+                                        var tags = i.name.split(' ').map(function(word) {
+                                            return word.toString().toLowerCase()
+                                        });
+                                        tags = tags.concat(productTags);
+                                        tags.forEach(function(tag) {
+                                            i.itemTags.text.push(tag)
+                                        });
+                                        try {
+                                            i.itemTags.text = tagParser.parse(i.itemTags.text)
+                                        } catch (err) {
+                                            console.log('tagParser error: ', err)
+                                        }
+                                        i.hasloc = true;
+                                        if (!i.name) {
+                                            i.name = 'Shopify Item'
+                                        }
+                                        i.id = variant.id.toString().trim();
+
+                                        i.save(function(e, item) {
+                                            if (e) {
+                                                console.log('452: ', e);
+                                            } else {
+                                                console.log('Shopify item saved to db: ', item)
+                                            }
+                                            wait(finishedVariant, 1000);
+                                        })
+
+                                    } else if (match) {
+
+                                        console.log('Item exists in db: ', match.name)
+                                        wait(finishedVariant, 1000);
+
+                                        // console.log('Item exists! : ', match)
+                                        // db.Landmarks.findOne({
+                                        //     '_id': match._id,
+                                        //     'linkbackname': 'shopify.com'
+                                        // }).update({
+                                        //     $set: {
+                                        //         'parents': updatedInv[0],
+                                        //         'loc.coordinates': updatedInv[1],
+                                        //         'updated_time': new Date()
+                                        //     }
+                                        // }, function(e, result) {
+                                        //     if (e) {
+                                        //         console.log('Inventory update error: ', e)
+                                        //     }
+                                        //     // console.log('Updated inventory for item:', match.id)
+                                        //     wait(callback, 1000);
+                                        // })
+                                    }
+                                })
+
+                            }, function done(err) {
+                                finishedProduct()
                             })
 
                         }, function done(err) {
-                            finishedProduct()
+                            if (err) console.log(err)
+
                         })
-
-                    }, function done(err) {
-                        if (err) console.log(err)
-
-
-
                     })
 
-                    res.render("index", {
-                        title: "Kipsearch Inventory Dump",
+                    res.render("added", {
+                        title: "Kipsearch Inventory Added",
                         current_shop: shop,
                         orders: orders,
-                        products: products
+                        products: products,
+                        homelink: homelink
                     });
                 });
 
@@ -331,7 +449,7 @@ function wait(callback, delay) {
 }
 
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 4000;
 
 app.listen(port, function() {
 
