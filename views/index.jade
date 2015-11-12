@@ -2,14 +2,30 @@ header.jumbotron
 
 -homelink = JSON.stringify(homelink)
 
-button(class="h2 large-link-button", onclick="addInventory()").
-    List my products from #{current_shop} on kipsearch for free
-script.
-    function addInventory() {
-    window.location.href = '/add'
-    }  
 div.row
-    div.span3
+    div.span3(style="position:fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);")
+        form(action='/add',method='post',style="margin-top:100px")
+            h3.
+                List your products on Kip for free!
+            br
+            label Enter your physical store address:
+            br
+            input(type="text", name="street", placeholder="101 Kip Street",size=50)
+            br
+            input(type="text", name="city", placeholder="New York",size=50)
+            br
+            input(type="text", name="state", placeholder="NY",size=50)
+            br
+            input(type="text", name="zipcode", placeholder="10001",size=50)
+            br
+            input(type="text", name="tel",placeholder="212-867-5309" size=50)
+            br
+            br
+            input(type="checkbox", name="online")
+            My  Store is online only.
+            br
+            br
+            input(type="submit", value="Submit")
         div.accordion#accordion     
         - if (typeof(products[0]) == 'undefined')
             div.accordion-group
@@ -43,11 +59,4 @@ div.row
                             a.close(data-dismiss="modal") ×
                             h3=product.title
                         div.modal-body
-        div(style="position:fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);")
-            button(class="link-button",onclick="shopify()").
-                Return to Shopify
-            script.
-                function shopify() {
-                var url = !{homelink};
-                window.location.href = url;
-                } 
+ 

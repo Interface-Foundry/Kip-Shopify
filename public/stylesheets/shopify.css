@@ -66,20 +66,22 @@ footer {
     margin-top: -6px;
 }
 
-.large-link-button {
-  line-height: 1;
+.header-kip {
+    line-height: 1;
     color: #251998;
-    font-size: 200%;
+    font-size: 100%;
     background: none!important;
     border: none;
     padding: 25px;
+    display:inline-block;
     /*font: inherit;*/
     /*cursor: pointer;*/
-    margin-left: 50px;
-    margin-right: 50px;
+  /*  margin-left: 50px;
+    margin-right: 50px;*/
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     /*font-weight: normal;*/
-    /*position:fixed;*/
+    position:fixed;
+    /*float: left;*/
     /*top: 50%;*/
     /*left: 50%;*/
     /*transform: translate(-50%, -50%);*/

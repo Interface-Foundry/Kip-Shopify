@@ -34,7 +34,13 @@ var schemas = [{
     filename: 'landmark_schema',
     single: 'Landmark',
     plural: 'Landmarks'
+}, {
+    filename: 'shopifyAccounts_schema',
+    single: 'ShopifyAccount',
+    plural: 'ShopifyAccounts'
 }];
+
+// module.exports = mongoose.model('shopifyAccounts', shopifyAccountsSchema, 'shopifyAccounts');
 
 module.exports = {
     connection: mongoose.connection,

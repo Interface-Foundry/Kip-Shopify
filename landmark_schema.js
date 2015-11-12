@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-//textSearch = require('mongoose-text-search');
 var monguurl = require('monguurl');
 var accounting = require('accounting');
 var geolib = require('geolib');
