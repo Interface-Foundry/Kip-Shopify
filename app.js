@@ -106,7 +106,6 @@ app.get('/', function(req, res) {
 
 
 app.post('/add', function(req, res) {
-    // console.log('REQ.BODY.ONLINE: ',req.body.online)
     var data = {
         shop: undefined,
         key: undefined,
@@ -138,12 +137,14 @@ app.post('/add', function(req, res) {
     if (data.shop !== undefined && data.key != undefined) {
         session = nodify.createSession(data.shop, apiKey, secret, data.key);
         if (session.valid()) {
-            process(data, session, res).then(function() {
-                // console.log('DONESKIIYEEEEEE')
+            // console.log('!!!!',encodeURIComponent(encodeURIComponent(data.shop.replace(/[^\w\s]/gi, ' ').split(' ').join(' '))))
+            process(data, session, res).then(function(parent) {
                 res.render("added", {
                     title: "Kipsearch Inventory Added",
-                    current_shop: data.shop,
-                    homelink: homelink
+                    searchquery: data.shop.replace(/[^\w\s]/gi, ' '),
+                    homelink: homelink,
+                    coords: parent.loc.coordinates,
+                    loc: data.city+","+data.state
                 })
             }).catch(function(err) {
                 console.log('There was an error: ', err)
@@ -396,11 +397,12 @@ function process(data, session, res) {
                                     var i = new db.Landmark();
                                     i.itemImageURL = awsImages;
                                     //Lets put online-only stuff in the south-pole, will have to modify search to include south-pole results universally
-                                    i.loc.type = 'MultiPoint'
+                                    i.loc.type = 'MultiPoint';
                                     i.loc.coordinates = parent ? [parent.loc.coordinates] : [
                                         [0, -90]
                                     ];
                                     i.source_generic_item = {
+                                        shop: data.shop.replace(/[^\w\s]/gi, ' ').split(' ').join(' '),
                                         inventory_tracked: (variant.inventory_management == 'shopify' && variant.inventory_policy == 'continue') ? true : false,
                                         inventory_quantity: (variant.inventory_management == 'shopify' && variant.inventory_policy == 'continue' && variant.inventory_quantity && variant.inventory_quantity >0) ? variant.inventory_quantity : undefined
                                     }
@@ -418,6 +420,7 @@ function process(data, session, res) {
                                         return word.toString().toLowerCase()
                                     });
                                     tags = tags.concat(productTags);
+                                    tags = tags.concat(data.shop.replace(/[^\w\s]/gi, ' ').split(' '));
                                     tags.forEach(function(tag) {
                                         i.itemTags.text.push(tag)
                                     });
@@ -454,7 +457,7 @@ function process(data, session, res) {
                     console.log('Finished all products.')
                     if (err) console.log('452', err)
 
-                    resolve();
+                    resolve(parent);
                 })
 
             })
