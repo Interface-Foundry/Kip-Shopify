@@ -24,7 +24,6 @@ var config = require('./config.json');
 apiKey = config.apiKey;
 secret = config.secret;
 
-
 // Configuration
 
 app.configure(function() {
@@ -81,7 +80,7 @@ app.get('/', function(req, res) {
             session.product.all({
                 // limit: 10000
             }, function(err, products) {
-                console.log("Products:", products.length);
+                // console.log("Products:", products.length);
                 if (err) {
                     console.log('There are no products!', err)
                     return res.send(404)
@@ -275,7 +274,7 @@ function getParent(data) {
         }
         //Create Parent in DB
         db.Landmarks.findOne({
-            'id': data.shop.trim(),
+            'id': 'shopify_' + data.shop,
             'linkbackname': 'myshopify.com'
         }, function(err, match) {
             if (err) {
@@ -301,7 +300,6 @@ function getParent(data) {
                         tel: data.tel
                     }
                     n.loc.coordinates = coords;
-                    n.name = n.id;
                     linkback = data.homelink;
                     linkbackname = 'myshopify.com';
                     uniquer.uniqueId('shopify ' + data.shop.trim(), 'Landmark').then(function(output) {
@@ -379,6 +377,11 @@ function process(data, session, res) {
                         async.eachSeries(product.variants, function iterator(variant, finishedVariant) {
                             // console.log('Variant: ', variant.title)
                                 //Check if this item exists
+                            
+                            if (variant.inventory_management == 'shopify' && variant.inventory_policy == 'deny' && variant.inventory_quantity && variant.inventory_quantity < 1) {
+                                return finishedVariant();
+                            }
+
                             db.Landmarks.findOne({
                                 'id': 'shopify_' + variant.id.toString().trim(),
                                 'linkback': data.homelink,
@@ -397,6 +400,10 @@ function process(data, session, res) {
                                     i.loc.coordinates = parent ? [parent.loc.coordinates] : [
                                         [0, -90]
                                     ];
+                                    i.source_generic_item = {
+                                        inventory_tracked: (variant.inventory_management == 'shopify' && variant.inventory_policy == 'continue') ? true : false,
+                                        inventory_quantity: (variant.inventory_management == 'shopify' && variant.inventory_policy == 'continue' && variant.inventory_quantity && variant.inventory_quantity >0) ? variant.inventory_quantity : undefined
+                                    }
                                     i.parents = parent ? [parent._id] : [];
                                     i.world = false;
                                     i.price = parseFloat(variant.price);
