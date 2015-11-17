@@ -13,7 +13,7 @@ var path = require('path')
 var apiKey, secret;
 var persistentKeys = {};
 var session = require('express-session')
-var db = require('./db')
+var db = require('../IF-root/components/IF_schemas/db')
 var async = require('async');
 var Promise = require('bluebird');
 var uniquer = require('./uniquer');
@@ -51,7 +51,7 @@ app.get('/', function(req, res) {
         shop = req.session.shopify.shop;
         console.log('shop stored in user session:', req.session);
         key = persistentKeys[shop];
-        homelink = 'http://' + shop + '.myshopify.com';
+        homelink = 'https://' + shop + '.myshopify.com';
     }
     if (req.query.shop) {
         shop = req.query.shop.replace(".myshopify.com", '');
@@ -126,7 +126,7 @@ function authenticate(req, res) {
             scope: {
                 products: "read"
             },
-            uriForTemporaryToken: "http://" + req.headers.host + "/shopify/login/finalize/token",
+            uriForTemporaryToken: "https://" + req.headers.host + "/shopify/login/finalize/token",
             onAskToken: function onToken(err, url) {
                 if (err) console.log('131: ',err)
                 console.log('URL: ', url)
@@ -172,23 +172,23 @@ app.get('/login/finalize/token', function(req, res) {
         };
 
         //Create a Shopify Account
-        db.ShopifyAccount.findOne({
+        db.Credentials.findOne({
             'shop': req.query.shop.trim()
         }, function(err, match) {
             if (err) {
                 console.log('103: ', err)
-
             }
             if (!match) {
                 //Store shopify users account data
-                var s = new db.ShopifyAccount();
+                var s = new db.Credential();
                 s.name = session.store_name.trim();
                 s.shop = req.query.shop.trim();
-                s.token = token
+                s.token = token;
+                s.vendor = 'shopify'
                 s.save(function(err, saved) {
                     if (err) console.log(err)
                     console.log('Shopify user saved: ', saved);
-                    return res.redirect('/')
+                    return res.redirect('/shopify')
                 })
             } else if (match) {
                 // console.log('Exists!!: ',match)
@@ -636,6 +636,6 @@ if (module.parent) {
     module.exports = app
 } else {
     app.listen(port, function() {
-        console.log("Running on: ", app.address().port);
+        // console.log("Running on: ", app.address().port);
     });
 }
