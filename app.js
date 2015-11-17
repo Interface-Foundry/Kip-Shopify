@@ -26,72 +26,42 @@ apiKey = config.apiKey;
 secret = config.secret;
 
 // Configuration
-console.log('DIRRRRR', path.join(__dirname, 'public'))
-
+// console.log('DIR: ', path.join(__dirname, 'public'))
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
-
 app.use(express.static(path.join(__dirname, 'public')))
-
-// app.set('view options', {
-//  layout: true
-// });
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-
 app.use(bodyParser.json());
-
-// app.use(express.static(__dirname + '/public'));
-// app.use(express.methodOverride());
 app.use(cookieParser());
 app.use(session({
     secret: "shhhhh!!!!"
 }));
-// app.use(app.router);
-
-
-// app.configure('development', function() {
-//     app.use(express.errorHandler({
-//         dumpExceptions: true,
-//         showStack: true
-//     }));
-// });
-
-// app.configure('production', function() {
-//     app.use(express.errorHandler());
-// });
 
 // app.use(require('prerender-node').set('prerenderServiceUrl', 'http://127.0.1.1:4000'));
 app.use(require('prerender-node').set('protocol', 'https'));
 
 // Routes
 app.get('/', function(req, res) {
-
-    // res.setHeader('Content-Type', 'text/plain');
-
     var shop = undefined,
         key = undefined;
     homelink = undefined;
-
     if (req.session.shopify) {
         shop = req.session.shopify.shop;
         console.log('shop stored in user session:', req.session);
         key = persistentKeys[shop];
         homelink = 'http://' + shop + '.myshopify.com';
     }
-
     if (req.query.shop) {
         shop = req.query.shop.replace(".myshopify.com", '');
         console.log('shop given by query:', shop);
         key = persistentKeys[shop];
     }
-
     if (shop !== undefined && key != undefined) {
         session = nodify.createSession(shop, apiKey, secret, key);
         if (session.valid()) {
             console.log('session is valid for <', shop, '>')
-
             session.product.all({
                 // limit: 10000
             }, function(err, products) {
@@ -263,7 +233,7 @@ app.post('/add', function(req, res) {
         session = nodify.createSession(data.shop, apiKey, secret, data.key);
         if (session.valid()) {
             // console.log('!!!!',encodeURIComponent(encodeURIComponent(data.shop.replace(/[^\w\s]/gi, ' ').split(' ').join(' '))))
-            process(data, session, res).then(function(parent) {
+            processData(data, session, res).then(function(parent) {
                 res.render("added", {
                     title: "Kipsearch Inventory Added",
                     searchquery: data.shop.replace(/[^\w\s]/gi, ' '),
@@ -376,7 +346,7 @@ function getLatLong(address) {
     })
 }
 
-function process(data, session, res) {
+function processData(data, session, res) {
     return new Promise(function(resolve, reject) {
 
         getParent(data).then(function(parent) {
