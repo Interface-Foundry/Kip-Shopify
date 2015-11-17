@@ -1,8 +1,3 @@
-//AUTOMATICALLY UPDATE INVENTORY DAILY
-//
-//Progress bar to add items -- > PREVIEW LINK : SEARCH NAME OF STORE AND LOCATION ON KIPSEARCH
-//
-
 var express = require('express'),
     routes = require('./routes')
 var cookieParser = require('cookie-parser');
@@ -12,18 +7,19 @@ var bodyParser = require('body-parser');
 var path = require('path')
 var apiKey, secret;
 var persistentKeys = {};
-var session = require('express-session')
 var db = require('../IF-root/components/IF_schemas/db')
 var async = require('async');
 var Promise = require('bluebird');
-var uniquer = require('./uniquer');
-var tagParser = require('./tagParser');
-var upload = require('./upload')
+var uniquer = require('../IF-root/IF_services/uniquer');
+var tagParser = require('../IF-root/IF_services/IF_forage/tagParser');
+var upload = require('../IF-root/IF_services/upload')
 var request = require('request')
-
-var config = require('./config.json');
-apiKey = config.apiKey;
-secret = config.secret;
+var session = require('express-session')
+var MongoStore = require('connect-mongo')(session);
+var config = require('../IF-root/config')
+var keys = require('./config.json');
+apiKey = keys.apiKey;
+secret = keys.secret;
 
 // Configuration
 // console.log('DIR: ', path.join(__dirname, 'public'))
@@ -35,9 +31,17 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 app.use(cookieParser());
+
+// console.log(')_)))): ',db.connection)
 app.use(session({
-    secret: "shhhhh!!!!"
+    secret: 'zergrushkekeke',
+    store: new MongoStore({
+        url: config.mongodb.url
+    }),
+    resave: true,
+    saveUninitialized: true
 }));
+
 
 // app.use(require('prerender-node').set('prerenderServiceUrl', 'http://127.0.1.1:4000'));
 app.use(require('prerender-node').set('protocol', 'https'));
@@ -128,7 +132,7 @@ function authenticate(req, res) {
             },
             uriForTemporaryToken: "https://" + req.headers.host + "/shopify/login/finalize/token",
             onAskToken: function onToken(err, url) {
-                if (err) console.log('131: ',err)
+                if (err) console.log('131: ', err)
                 console.log('URL: ', url)
                 res.redirect(url);
             }
@@ -503,7 +507,7 @@ function getImages(product) {
 
 function updateInventory(shopname) {
     return new Promise(function(resolve, reject) {
-        console.log('shopname: ',shopname)
+        console.log('shopname: ', shopname)
         db.Landmarks.findOne({
             'id': 'shopify_' + shopname
         }, function(err, shop) {
@@ -597,7 +601,7 @@ function updateInventory(shopname) {
                                 finishedProduct()
                             })
                         }, function finishedProducts(err) {
-                            if (err) console.log('595: ',err);
+                            if (err) console.log('595: ', err);
                             console.log('Shop updated!!')
                             wait(function() {
                                 resolve();
