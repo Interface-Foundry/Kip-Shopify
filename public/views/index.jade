@@ -35,7 +35,7 @@ div.row
             - each product, i in products
                 div.accordion-group
                     div.accordion-heading
-                    a.accordion-toggle(data-toggle="collapse", data-parent="#accordion", href="##{product.id}")
+                    a.accordion-toggle(data-toggle="collapse", data-parent="#accordion", href="#{product.id}")
                         |#{product.title} 
                         span.pull-right.muted #{product.price_range}          
                 div(id="#{product.id}", class="accordion-body collapse")

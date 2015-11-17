@@ -3,9 +3,15 @@ var mongoose = Promise.promisifyAll(require('mongoose'));
 // var config = require('config');
 
 if (mongoose.connection.readyState == 0) {
-    mongoose.connect('mongodb://pikachu.kipapp.co:27017/foundry', {
+    mongoose.connect('mongodb://flareon.internal.kipapp.co/foundry,jankeon.internal.kipapp.co/foundry,vaporeon.internal.kipapp.co/foundry?&connectTimeoutMS=600000&socketTimeoutMS=600000', {
         replset: {
             rs_name: 'foundry',
+            socketOptions: {
+                keepAlive: 1
+            }
+        },
+        server: {
+            poolSize: 5,
             socketOptions: {
                 keepAlive: 1
             }

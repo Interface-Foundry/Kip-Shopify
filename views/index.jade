@@ -27,7 +27,10 @@ block body
                 My  Store is online only.
                 br
                 br
-                input(type="submit", value="Submit")
+                input(type="submit", class="submitter" id="submit_button",value="Submit")
+                script(type='text/javascript')
+                    $('#submit_button').click(function() {
+                    $('div.inner').animate({ width: "100%" },3000);})
             div.accordion#accordion     
             - if (typeof(products[0]) == 'undefined')
                 div.accordion-group

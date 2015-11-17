@@ -39,6 +39,32 @@ footer {
     color: #fff;
 }
 
+.submitter {
+    margin-left: 80px;
+}
+
+.progress {
+    background: -webkit-linear-gradient( left, #f23030 0%, #ffef19 40%, #ffef19 60%, #35e500 100%);
+    border: 1px solid black;
+    border-radius: 3px;
+    height: 30px;
+    margin: 20px;
+    position: relative;
+    width: 220px;
+    .inner {
+        background: ghostwhite;
+        border-radius: 3px;
+        float: right;
+        margin: 0px;
+        padding: 0px;
+        position: relative;
+        right: 0px;
+        height: 100%;
+        width: 0%;
+        -webkit-animation: fill 3s linear;
+    }
+}
+
 .dividerz {
     width: 50px;
     height: auto;
@@ -73,14 +99,14 @@ footer {
     background: none!important;
     border: none;
     padding: 25px;
-    display:inline-block;
+    display: inline-block;
     /*font: inherit;*/
     /*cursor: pointer;*/
-  /*  margin-left: 50px;
+    /*  margin-left: 50px;
     margin-right: 50px;*/
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     /*font-weight: normal;*/
-    position:fixed;
+    position: fixed;
     /*float: left;*/
     /*top: 50%;*/
     /*left: 50%;*/

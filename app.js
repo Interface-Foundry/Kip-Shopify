@@ -3,8 +3,8 @@
 //Progress bar to add items -- > PREVIEW LINK : SEARCH NAME OF STORE AND LOCATION ON KIPSEARCH
 //
 
-var express = require('express')
- , routes = require('./routes')
+var express = require('express'),
+    routes = require('./routes')
 var cookieParser = require('cookie-parser');
 var app = module.exports = express();
 var nodify = require('nodify-shopify');
@@ -31,7 +31,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(bodyParser.urlencoded({
-  extended: true
+    extended: true
 }));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -87,7 +87,7 @@ app.get('/', function(req, res) {
             // console.log('REQ.ORIGINALURL: ',req.originalUrl)
             res.redirect(req.originalUrl + 'login')
         }
-            
+
     }
 });
 
@@ -106,7 +106,7 @@ app.get('/login', function(req, res) {
         //redirect to auth
         res.redirect("/shopify/login/authenticate");
         console.log('181')
-        // authenticate(req,res)
+            // authenticate(req,res)
     } else {
         res.render("login", {
             title: "Kipsearch Inventory Manager"
@@ -128,7 +128,8 @@ function authenticate(req, res) {
             },
             uriForTemporaryToken: "http://" + req.headers.host + "/shopify/login/finalize/token",
             onAskToken: function onToken(err, url) {
-                console.log('URL: ',url)
+                if (err) console.log('131: ',err)
+                console.log('URL: ', url)
                 res.redirect(url);
             }
         });
@@ -139,7 +140,7 @@ function authenticate(req, res) {
 }
 
 app.get('/shopify/login/finalize', function(req, res) {
-    console.log('finalizing ...', req.query)
+    console.log('/login/finalize')
     params = req.query;
     req.session.shopify = params;
     params.onAskToken = function(err, url) {
@@ -160,7 +161,7 @@ app.get('/shopify/login/finalize', function(req, res) {
 });
 
 app.get('/login/finalize/token', function(req, res) {
-    console.log('hitting thi brah',req.query)
+    console.log('/login/finalize/token')
     if (!req.query.code)
         return res.redirect("/shopify/login?error=Invalid%20connection.%20Please Retry")
     session.requestPermanentAccessToken(req.query.code, function onPermanentAccessToken(token) {
@@ -197,10 +198,28 @@ app.get('/login/finalize/token', function(req, res) {
     })
 })
 
+// app.get('/update', function(req, res) {
+//     console.log('/update')
+//     var shop = undefined,
+//         key = undefined;
+//     homelink = undefined;
+//     if (req.session.shopify) {
+//         shop = req.session.shopify.shop;
+//         console.log('shop stored in user session:', req.session);
+//         key = persistentKeys[shop];
+//         homelink = 'https://' + shop + '.myshopify.com';
+//     }
+//     if (req.query.shop) {
+//         shop = req.query.shop.replace(".myshopify.com", '');
+//         console.log('shop given by query:', shop);
+//         key = persistentKeys[shop];
+//     }
 
+
+
+// })
 
 app.post('/add', function(req, res) {
-    console.log('ZINGGG')
     var data = {
         shop: undefined,
         key: undefined,
@@ -211,7 +230,6 @@ app.post('/add', function(req, res) {
         online: undefined,
         homelink: undefined
     }
-
     data.street = req.body.street ? req.body.street : undefined;
     data.city = req.body.city ? req.body.city : undefined
     data.state = req.body.state ? req.body.state : undefined
@@ -222,7 +240,7 @@ app.post('/add', function(req, res) {
     if (req.session.shopify) {
         data.shop = req.session.shopify.shop;
         data.key = persistentKeys[data.shop];
-        data.homelink = 'http://' + data.shop.toString().trim() + '.myshopify.com';
+        data.homelink = 'https://' + data.shop.toString().trim() + '.myshopify.com';
     }
     if (req.query.shop) {
         data.shop = req.query.shop.replace(".myshopify.com", '');
@@ -381,7 +399,7 @@ function processData(data, session, res) {
 
                             db.Landmarks.findOne({
                                 'id': 'shopify_' + variant.id.toString().trim(),
-                                'linkback': data.homelink,
+                                'source_generic_item.product_name': product.title,
                                 'linkbackname': 'myshopify.com'
                             }, function(err, match) {
                                 if (err) {
@@ -398,6 +416,8 @@ function processData(data, session, res) {
                                         [0, -90]
                                     ];
                                     i.source_generic_item = {
+                                        product_name: product.title,
+                                        product_description: product.body_html,
                                         shop: data.shop.replace(/[^\w\s]/gi, ' ').split(' ').join(' '),
                                         inventory_tracked: (variant.inventory_management == 'shopify' && variant.inventory_policy == 'continue') ? true : false,
                                         inventory_quantity: (variant.inventory_management == 'shopify' && variant.inventory_policy == 'continue' && variant.inventory_quantity && variant.inventory_quantity > 0) ? variant.inventory_quantity : undefined
@@ -479,6 +499,129 @@ function getImages(product) {
         }
     })
 }
+
+
+function updateInventory(shopname) {
+    return new Promise(function(resolve, reject) {
+        console.log('shopname: ',shopname)
+        db.Landmarks.findOne({
+            'id': 'shopify_' + shopname
+        }, function(err, shop) {
+            if (err) console.log('31: ', err)
+            if (!shop) {
+                console.log('33: Shop Not found!')
+                return reject('Shop not found.')
+            }
+
+            console.log('Shop found: ', shop._id)
+            var sid = new ObjectId(shop._id);
+            db.Landmarks.find({
+                'parents': sid
+            }, function(err, olditems) {
+                if (err) console.log('31: ', err)
+                old_items = olditems.map(function(item) {
+                    return 'shopify_' + item.id.toString().trim()
+                })
+                if (!olditems || (olditems && olditems.length < 1)) {
+                    console.log('46: No items found for this shop!')
+                    return resolve()
+                }
+
+                var url = 'https://' + shop.name + '/admin/products.json?scope=read_products'
+                var options = {
+                    url: url,
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13',
+                        'Content-Type': 'application/json',
+                        'X-Shopify-Access-Token': shop.token
+                    }
+                };
+                console.log('GET URL: ', url)
+                request(options, function(error, response, body) {
+                    if ((!error) && (response.statusCode == 200)) {
+                        body = JSON.parse(body);
+                        if (!body.products || body.products.length < 1) {
+                            console.log('\n\n\nEmpty response...\n\n\n')
+                            return resolve();
+                        }
+                        async.eachSeries(body.products, function iterator(product, finishedProduct) {
+                            if (product.variants && product.variants.length < 1) {
+                                return finishedProduct()
+                            }
+                            new_items = product.variants.map(function(variant) {
+                                return 'shopify_' + variant.id.toString().trim()
+                            })
+                            async.eachSeries(product.variants, function iterator(variant, finishedVariant) {
+                                db.Landmark.findOne({
+                                    'id': 'shopify_' + variant.id.toString().trim(),
+                                    'linkbackname': 'myshopify.com'
+                                }, function(err, item) {
+                                    if (err) console.log('58: ', err);
+
+                                    updateInventory(old_items, new_items).then(function() {
+                                        if (variant.inventory_management == 'shopify' && variant.inventory_policy == 'deny' && variant.inventory_quantity && variant.inventory_quantity < 1) {
+                                            item.update({
+                                                $set: {
+                                                    'parents': [],
+                                                    'loc.coordinates': [
+                                                        [0, -90]
+                                                    ],
+                                                    'source_generic_item.inventory_quantity': 0
+                                                }
+                                            }, function(e, result) {
+                                                if (e) {
+                                                    console.log('66: ', e)
+                                                }
+                                                return finishedVariant();
+                                            })
+                                        } else if (variant.inventory_quantity && variant.inventory_quantity > 0) {
+                                            item.update({
+                                                $set: {
+                                                    'source_generic_item.inventory_quantity': variant.inventory_quantity
+                                                }
+                                            }, function(e, result) {
+                                                if (e) {
+                                                    console.log('66: ', e)
+                                                }
+                                                return finishedVariant();
+                                            })
+                                        }
+                                    }).catch(function(err) {
+                                        if (err) console.log('87: ', err)
+                                        return finishedVariant();
+                                    })
+                                })
+                            }, function finishedVariants(err) {
+                                if (err) console.log('116: ', err)
+                                console.log('Finished Variants!')
+                                finishedProduct()
+                            })
+                        }, function finishedProducts(err) {
+                            if (err) console.log('595: ',err);
+                            console.log('Shop updated!!')
+                            wait(function() {
+                                resolve();
+                            }, 800);
+                        })
+                    } else {
+                        if (error) {
+                            console.log('Shopify API error ', error)
+                            wait(function() {
+                                resolve();
+                            }, 800);
+                        } else {
+                            console.log('bad response')
+                            wait(function() {
+                                resolve();
+                            }, 800);
+                        }
+                    }
+                });
+            })
+        })
+    })
+}
+
 
 function wait(callback, delay) {
     var startTime = new Date().getTime();
