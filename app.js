@@ -36,7 +36,7 @@ app.use(cookieParser());
 app.use(session({
     secret: 'zergrushkekeke',
     store: new MongoStore({
-        url: config.mongodb.url
+        mongooseConnection: 'mongodb://flareon.kipapp.co/foundry'
     }),
     resave: true,
     saveUninitialized: true
