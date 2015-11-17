@@ -3,15 +3,16 @@
 //Progress bar to add items -- > PREVIEW LINK : SEARCH NAME OF STORE AND LOCATION ON KIPSEARCH
 //
 
-var express = require('express'),
-    routes = require('./routes')
-
-var app = module.exports = express.createServer();
+var express = require('express')
+ , routes = require('./routes')
+var cookieParser = require('cookie-parser');
+var app = module.exports = express();
 var nodify = require('nodify-shopify');
-
+var bodyParser = require('body-parser');
+var path = require('path')
 var apiKey, secret;
 var persistentKeys = {};
-
+var session = require('express-session')
 var db = require('./db')
 var async = require('async');
 var Promise = require('bluebird');
@@ -25,43 +26,57 @@ apiKey = config.apiKey;
 secret = config.secret;
 
 // Configuration
+console.log('DIRRRRR', path.join(__dirname, 'public'))
 
-app.configure(function() {
-    app.set('views', __dirname + '/views');
-    app.set('view engine', 'jade');
-    app.use(express.bodyParser());
-    app.use(express.methodOverride());
-    app.use(express.cookieParser());
-    app.use(express.session({
-        secret: "shhhhh!!!!"
-    }));
-    app.use(app.router);
-    app.use(express.static(__dirname + '/public'));
-});
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
 
-app.configure('development', function() {
-    app.use(express.errorHandler({
-        dumpExceptions: true,
-        showStack: true
-    }));
-});
+app.use(express.static(path.join(__dirname, 'public')))
 
-app.configure('production', function() {
-    app.use(express.errorHandler());
-});
+// app.set('view options', {
+//  layout: true
+// });
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
-app.use(require('prerender-node').set('prerenderServiceUrl', 'http://127.0.1.1:4000'));
+app.use(bodyParser.json());
+
+// app.use(express.static(__dirname + '/public'));
+// app.use(express.methodOverride());
+app.use(cookieParser());
+app.use(session({
+    secret: "shhhhh!!!!"
+}));
+// app.use(app.router);
+
+
+// app.configure('development', function() {
+//     app.use(express.errorHandler({
+//         dumpExceptions: true,
+//         showStack: true
+//     }));
+// });
+
+// app.configure('production', function() {
+//     app.use(express.errorHandler());
+// });
+
+// app.use(require('prerender-node').set('prerenderServiceUrl', 'http://127.0.1.1:4000'));
 app.use(require('prerender-node').set('protocol', 'https'));
 
 // Routes
 app.get('/', function(req, res) {
+
+    // res.setHeader('Content-Type', 'text/plain');
+
     var shop = undefined,
         key = undefined;
     homelink = undefined;
 
     if (req.session.shopify) {
         shop = req.session.shopify.shop;
-        // console.log('shop stored in user session:', req.session);
+        console.log('shop stored in user session:', req.session);
         key = persistentKeys[shop];
         homelink = 'http://' + shop + '.myshopify.com';
     }
@@ -97,15 +112,125 @@ app.get('/', function(req, res) {
     } else {
         console.log('session is not valid yet, we need some authentication !')
         if (shop !== undefined)
-            res.redirect('/login/authenticate?shop=' + shop);
-        else
-            res.redirect('/login')
+            res.redirect('/shopify/login/authenticate?shop=' + shop);
+        else {
+            // console.log('REQ.ORIGINALURL: ',req.originalUrl)
+            res.redirect(req.originalUrl + 'login')
+        }
+            
     }
 });
 
 
 
+app.get('/login', function(req, res) {
+
+    try {
+        shop = res.body.shop;
+    } catch (error) {
+        shop = undefined;
+    }
+    if (req.session.shopify) {
+        res.redirect("/shopify");
+    } else if (shop != undefined) {
+        //redirect to auth
+        res.redirect("/shopify/login/authenticate");
+        console.log('181')
+        // authenticate(req,res)
+    } else {
+        res.render("login", {
+            title: "Kipsearch Inventory Manager"
+        });
+    }
+});
+
+app.post('/login/authenticate', authenticate);
+app.get('/login/authenticate', authenticate);
+
+function authenticate(req, res) {
+    console.log('Authenticating...')
+    var shop = req.query.shop || req.body.shop;
+    if (shop !== undefined && shop !== null) {
+        console.log('creating a session for', shop, apiKey, secret)
+        session = nodify.createSession(shop, apiKey, secret, {
+            scope: {
+                products: "read"
+            },
+            uriForTemporaryToken: "http://" + req.headers.host + "/shopify/login/finalize/token",
+            onAskToken: function onToken(err, url) {
+                console.log('URL: ',url)
+                res.redirect(url);
+            }
+        });
+    } else {
+        console.log('no shop, go login')
+        res.redirect('/login');
+    }
+}
+
+app.get('/shopify/login/finalize', function(req, res) {
+    console.log('finalizing ...', req.query)
+    params = req.query;
+    req.session.shopify = params;
+    params.onAskToken = function(err, url) {
+        if (err) {
+            res.send("Could not finalize");
+            console.warn('Could not finalize login :', err)
+        }
+        res.redirect(url);
+    }
+
+    session = nodify.createSession(req.query.shop, apiKey, secret, params);
+    if (session.valid()) {
+        console.log('session is valid!')
+        res.redirect("/shopify");
+    } else {
+        res.send("Could not finalize");
+    }
+});
+
+app.get('/login/finalize/token', function(req, res) {
+    console.log('hitting thi brah',req.query)
+    if (!req.query.code)
+        return res.redirect("/shopify/login?error=Invalid%20connection.%20Please Retry")
+    session.requestPermanentAccessToken(req.query.code, function onPermanentAccessToken(token) {
+        console.log('Authenticated on shop <', req.query.shop, '/', session.store_name, '> with token <', token, '>')
+        persistentKeys[session.store_name] = token;
+        req.session.shopify = {
+            shop: session.store_name
+        };
+
+        //Create a Shopify Account
+        db.ShopifyAccount.findOne({
+            'shop': req.query.shop.trim()
+        }, function(err, match) {
+            if (err) {
+                console.log('103: ', err)
+
+            }
+            if (!match) {
+                //Store shopify users account data
+                var s = new db.ShopifyAccount();
+                s.name = session.store_name.trim();
+                s.shop = req.query.shop.trim();
+                s.token = token
+                s.save(function(err, saved) {
+                    if (err) console.log(err)
+                    console.log('Shopify user saved: ', saved);
+                    return res.redirect('/')
+                })
+            } else if (match) {
+                // console.log('Exists!!: ',match)
+                res.redirect('/shopify')
+            }
+        })
+    })
+})
+
+
+
 app.post('/add', function(req, res) {
+    console.log('ZINGGG')
     var data = {
         shop: undefined,
         key: undefined,
@@ -144,7 +269,7 @@ app.post('/add', function(req, res) {
                     searchquery: data.shop.replace(/[^\w\s]/gi, ' '),
                     homelink: homelink,
                     coords: parent.loc.coordinates,
-                    loc: data.city+","+data.state
+                    loc: data.city + "," + data.state
                 })
             }).catch(function(err) {
                 console.log('There was an error: ', err)
@@ -153,111 +278,12 @@ app.post('/add', function(req, res) {
     } else {
         console.log('session is not valid yet, we need some authentication !')
         if (shop !== undefined)
-            res.redirect('/login/authenticate?shop=' + shop);
+            res.redirect('/shopify/login/authenticate?shop=' + shop);
         else
-            res.redirect('/login')
+            res.redirect('/shopify/login')
     }
 });
 
-
-app.get('/login', function(req, res) {
-    try {
-        shop = res.body.shop;
-    } catch (error) {
-        shop = undefined;
-    }
-
-    if (req.session.shopify) {
-        res.redirect("/");
-    } else if (shop != undefined) {
-        //redirect to auth
-        res.redirect("/login/authenticate");
-    } else {
-        res.render("login", {
-            title: "Kipsearch Inventory Manager"
-        });
-    }
-});
-
-app.post('/login/authenticate', authenticate);
-app.get('/login/authenticate', authenticate);
-
-function authenticate(req, res) {
-    var shop = req.query.shop || req.body.shop;
-    if (shop !== undefined && shop !== null) {
-        console.log('creating a session for', shop, apiKey, secret)
-        session = nodify.createSession(shop, apiKey, secret, {
-            scope: {
-                products: "read"
-            },
-            uriForTemporaryToken: "http://" + req.headers.host + "/login/finalize/token",
-            onAskToken: function onToken(err, url) {
-                res.redirect(url);
-            }
-        });
-    } else {
-        console.log('no shop, go login')
-        res.redirect('/login');
-    }
-}
-
-app.get('/login/finalize', function(req, res) {
-    console.log('finalizing ...', req.query)
-    params = req.query;
-    req.session.shopify = params;
-    params.onAskToken = function(err, url) {
-        if (err) {
-            res.send("Could not finalize");
-            console.warn('Could not finalize login :', err)
-        }
-        res.redirect(url);
-    }
-
-    session = nodify.createSession(req.query.shop, apiKey, secret, params);
-    if (session.valid()) {
-        console.log('session is valid!')
-        res.redirect("/");
-    } else {
-        res.send("Could not finalize");
-    }
-});
-
-app.get('/login/finalize/token', function(req, res) {
-    if (!req.query.code)
-        return res.redirect("/login?error=Invalid%20connection.%20Please Retry")
-    session.requestPermanentAccessToken(req.query.code, function onPermanentAccessToken(token) {
-        console.log('Authenticated on shop <', req.query.shop, '/', session.store_name, '> with token <', token, '>')
-        persistentKeys[session.store_name] = token;
-        req.session.shopify = {
-            shop: session.store_name
-        };
-
-        //Create a Shopify Account
-        db.ShopifyAccount.findOne({
-            'shop': req.query.shop.trim()
-        }, function(err, match) {
-            if (err) {
-                console.log('103: ', err)
-
-            }
-            if (!match) {
-                //Store shopify users account data
-                var s = new db.ShopifyAccount();
-                s.name = session.store_name.trim();
-                s.shop = req.query.shop.trim();
-                s.token = token
-                s.save(function(err, saved) {
-                    if (err) console.log(err)
-                    console.log('Shopify user saved: ', saved);
-                    return res.redirect('/')
-                })
-            } else if (match) {
-                // console.log('Exists!!: ',match)
-                res.redirect('/')
-            }
-        })
-    })
-})
 
 app.get('/logout', function(req, res) {
     if (req.session.shopify) {
@@ -377,8 +403,8 @@ function process(data, session, res) {
                     getImages(product).then(function(awsImages) {
                         async.eachSeries(product.variants, function iterator(variant, finishedVariant) {
                             // console.log('Variant: ', variant.title)
-                                //Check if this item exists
-                            
+                            //Check if this item exists
+
                             if (variant.inventory_management == 'shopify' && variant.inventory_policy == 'deny' && variant.inventory_quantity && variant.inventory_quantity < 1) {
                                 return finishedVariant();
                             }
@@ -404,7 +430,7 @@ function process(data, session, res) {
                                     i.source_generic_item = {
                                         shop: data.shop.replace(/[^\w\s]/gi, ' ').split(' ').join(' '),
                                         inventory_tracked: (variant.inventory_management == 'shopify' && variant.inventory_policy == 'continue') ? true : false,
-                                        inventory_quantity: (variant.inventory_management == 'shopify' && variant.inventory_policy == 'continue' && variant.inventory_quantity && variant.inventory_quantity >0) ? variant.inventory_quantity : undefined
+                                        inventory_quantity: (variant.inventory_management == 'shopify' && variant.inventory_policy == 'continue' && variant.inventory_quantity && variant.inventory_quantity > 0) ? variant.inventory_quantity : undefined
                                     }
                                     i.parents = parent ? [parent._id] : [];
                                     i.world = false;
@@ -493,7 +519,10 @@ function wait(callback, delay) {
 
 var port = 4000;
 
-app.listen(port, function() {
-
-    console.log("Running on: ", app.address().port);
-});
+if (module.parent) {
+    module.exports = app
+} else {
+    app.listen(port, function() {
+        console.log("Running on: ", app.address().port);
+    });
+}

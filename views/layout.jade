@@ -4,12 +4,12 @@ html
     title= title
     meta(name="viewport", content='width=device-width, initial-scale=1')
     link(href='/favicon.ico', rel='shortcut icon', type='image/x-icon')
-    link(rel='stylesheet', href='/stylesheets/twitter.css')
-    link(rel='stylesheet', href='/stylesheets/imports.css')
-    link(rel='stylesheet', href='/stylesheets/shopify.css')
-    link(rel='stylesheet', href='/stylesheets/shopify_buttons.css')
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
+    link(rel='stylesheet', href='/shopify/stylesheets/twitter.css',type='text/javascript')
+    link(rel='stylesheet', href='/shopify/stylesheets/imports.css',type='text/javascript')
+    link(rel='stylesheet', href='/shopify/stylesheets/shopify.css',type='text/javascript')
+    link(rel='stylesheet', href='/shopify/stylesheets/shopify_buttons.css',type='text/javascript')
+    link(rel='stylesheet', href='/shopify/stylesheets/style.css',type='text/javascript')
+    script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js")
     script(type="text/javascript", src="/javascripts/bootstrap.js")
     link(rel="stylesheet", href="http://fonts.googleapis.com/css?family=Open+Sans")
   body
@@ -50,6 +50,6 @@ html
                                             | &nbsp;Logout   
 
     div.container
-        div.content!= body
+        block body
         footer
             
