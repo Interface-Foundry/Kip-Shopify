@@ -8,7 +8,7 @@ div.row
             h3.
                 List your products on Kip for free!
             br
-            label Enter your physical store address:
+            label ENTER your physical store address:
             br
             input(type="text", name="street", placeholder="101 Kip Street",size=50)
             br
@@ -26,19 +26,19 @@ div.row
             br
             br
             input(type="submit", value="Submit")
-        div.accordion#accordion     
+        div.accordion#accordion(style="style="display:inline-block"")    
         - if (typeof(products[0]) == 'undefined')
             div.accordion-group
                 div.accordion-heading
                     em Glups, you don't have any product to be shown!
         - else
             - each product, i in products
-                div.accordion-group
+                div.accordion-group(style="display:inline-block")
                     div.accordion-heading
                     a.accordion-toggle(data-toggle="collapse", data-parent="#accordion", href="#{product.id}")
                         |#{product.title} 
                         span.pull-right.muted #{product.price_range}          
-                div(id="#{product.id}", class="accordion-body collapse")
+                div(id="#{product.id}", class="accordion-body collapse", style="display:inline-block")
                     div.accordion-inner
                     - if(product.images)
                         - if(product.images.first)

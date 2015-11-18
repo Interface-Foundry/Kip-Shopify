@@ -1,64 +1,54 @@
 extends layout
 block body
     header.jumbotron
-
+    -storeExists = storeExists
     -homelink = JSON.stringify(homelink)
-
+    script(type="text/javascript").
+        function check(storeExists) {
+        console.log('store?')
+        }
     div.row
-        div.span3(style="position:fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);")
-            form(action='/shopify/add',method='post',style="margin-top:100px")
-                h3.
-                    List your products on Kip for free!
+        div.span(style="position:fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);", hidden=storeExists)
+            form(action='/shopify/add',method='post', style="margin-top:50px")
                 br
+                br
+                h3.
+                    Enter your store on Kip!
+                br
+                input(type="checkbox", name="online", onchange="toggleDisabled(this.checked)", style="display: inline;")
+                p(style="display:inline; margin-left: 10px") *Store is online only.
+                br
+                br
+                script(type="text/javascript").
+                    function toggleDisabled(_checked) {
+                    document.getElementById('i1').disabled = _checked ? true : false;
+                    document.getElementById('i2').disabled = _checked ? true : false;
+                    document.getElementById('i3').disabled = _checked ? true : false;
+                    document.getElementById('i4').disabled = _checked ? true : false;
+                    document.getElementById('i5').disabled = _checked ? true : false;
+                    }
                 label Enter your physical store address:
                 br
-                input(type="text", name="street", placeholder="101 Kip Street",size=50)
+                label Street
+                input(type="text",id="i1",name="street", placeholder="example: 100 Kip Street",size=50, required)
                 br
-                input(type="text", name="city", placeholder="New York",size=50)
+                label City 
+                input(type="text",id="i2",name="city", placeholder="example: New York",size=50, required)
                 br
-                input(type="text", name="state", placeholder="NY",size=50)
+                label State
+                input(type="text",id="i3", name="state", placeholder="example: NY",size=50, required)
                 br
-                input(type="text", name="zipcode", placeholder="10001",size=50)
+                label Zipcode
+                input(type="text",id="i4", name="zipcode", placeholder="example: 10001",size=50,required)
                 br
-                input(type="text", name="tel",placeholder="212-867-5309" size=50)
+                label Contact Number (optional)
+                input(type="text",id="i5", name="tel",placeholder="example: 212-867-5309" size=50)
+                input(type="hidden",id="exists", name="exists", value='false')
                 br
-                br
-                input(type="checkbox", name="online")
-                My  Store is online only.
-                br
-                br
-                input(type="submit", class="submitter" id="submit_button",value="Submit")
-            div.accordion#accordion     
-            - if (typeof(products[0]) == 'undefined')
-                div.accordion-group
-                    div.accordion-heading
-                        em Glups, you don't have any product to be shown!
-            - else
-                - each product, i in products
-                    div.accordion-group
-                        div.accordion-heading
-                        a.accordion-toggle(data-toggle="collapse", data-parent="#accordion", href="##{product.id}")
-                            |#{product.title} 
-                            span.pull-right.muted #{product.price_range}          
-                    div(id="#{product.id}", class="accordion-body collapse")
-                        div.accordion-inner
-                        - if(product.images)
-                            - if(product.images.first)
-                                div.polaroid
-                                a(href="#modal-#{product.id}", data-toggle="modal")
-                                        img(src="#{product.images.first.medium}")
-
-                        p
-                            strong Type: 
-                            | #{product.product_type}
-
-                        p !{product.body_html}
-                        
-                        br
-
-                        div(id="#modal-#{product.id}", class="modal hide fade", style="display:none")
-                            div.modal-header
-                                a.close(data-dismiss="modal") ×
-                                h3=product.title
-                            div.modal-body
-     
+                input(type="submit", class="btn btn-primary btn-large submitter" id="submit_button",value="Submit")
+        div.span(style="position:fixed;top: 40%;left: 50%;transform: translate(-50%, -50%);", hidden=!storeExists)
+            h3.
+                Keep all of your products and inventory up-to-date on Kip! 
+            form(action='/shopify/add',method='post', style="margin-top:50px")
+                input(type="hidden",id="exists", name="exists", value='true')
+                input(type="submit", class="btn btn-primary btn-large submitter", style="margin-left:150px", id="submit_button",value="Update my Inventory!")
