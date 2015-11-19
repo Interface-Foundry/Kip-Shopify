@@ -1,8 +1,5 @@
 //TODO: 
-//FireFox issue
 //Loading bar
-//
-//
 
 var express = require('express'),
     routes = require('./routes')
@@ -229,6 +226,7 @@ app.get('/login/finalize/token', function(req, res) {
 })
 
 app.post('/add', function(req, res) {
+    
     var data = {
         shop: undefined,
         key: undefined,
@@ -260,7 +258,7 @@ app.post('/add', function(req, res) {
         session = nodify.createSession(data.shop, apiKey, secret, data.key);
         if (session.valid()) {
             // console.log('\n\nreq.body: ',req.body)
-            if (!req.body.exists) {
+            if (req.body.exists == 'false') {
                 processData(data, session, res).then(function(parent) {
                     var coordinates = parent ? parent.loc.coordinates : [0, -90]
                     var location = (data.city && data.state) ? (data.city + "," + data.state) : 'My Location'

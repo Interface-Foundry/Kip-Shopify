@@ -19,10 +19,10 @@ html
             div.container(style="margin-left: 5% ;margin-top: 10px, line-height: 10px")
                 a(href="http://www.kipsearch.com", class="brand")
                     img(src="/img/kip_logo_purp.svg", class="kip-logo", style="width:100px;height:100px")
-                a(href="http://www.kipsearch.com", class="h1 Top-Tag", style="font-size:22px;display:block;margin-left: 10px") Search for clothes in IRL stores around you
+                a(href="http://www.kipsearch.com", class="h1 Top-Tag", style="font-size:22px;display:block;margin-left: 10px;margin-top:-5px") Search for clothes in IRL stores around you
                 - if (typeof(current_shop) != 'undefined')
                     div.nav-collapse
-                        ul.nav.pull-right(style="margin-top:-5%")
+                        ul.nav.pull-right(style="margin-top:-5%;")
                             li.dropdown
                                 a.shop_name.dropdown-toggle(data-toggle='dropdown', href="#" )= current_shop
                                 ul.dropdown-menu

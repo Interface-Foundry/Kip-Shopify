@@ -33,6 +33,7 @@ body {
     url("kip/kip.svg") format("svg");
 }*/
 
+
 @font-face {
 	font-family: 'kiplevels';
 	src:url('../fonts/kiplevels.eot?-y4ype7');
@@ -276,6 +277,18 @@ form {
 
 .green {
     color: #397434;
+}
+
+input.disabled {
+    background-color: #ccc;
+}
+
+.vibile {
+    visibility: visible;
+}
+
+.loader-gif {
+    visibility: hidden;
 }
 
 input.color-Positive {
