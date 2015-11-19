@@ -18,7 +18,7 @@ html
         div.navbar-inner
             div.container(style="margin-left: 5% ;margin-top: 10px, line-height: 10px")
                 a(href="http://www.kipsearch.com", class="brand")
-                    img(src="/img/kip_logo_purp.svg", class="kip-logo", style="width:100px;height:100px")
+                    img(src="/shopify/img/kip_logo_purp.svg", class="kip-logo", style="width:100px;height:100px")
                 a(href="http://www.kipsearch.com", class="h1 Top-Tag", style="font-size:22px;display:block;margin-left: 10px;margin-top:-5px") Search for clothes in IRL stores around you
                 - if (typeof(current_shop) != 'undefined')
                     div.nav-collapse
@@ -29,28 +29,26 @@ html
                                     li
                                         a(href="http://#{current_shop}", target = 'blank')
                                             i.icon-home
-                                            | &nbsp;Storefront  
+                                            | &nbsp;Storefront
                                     li
                                         a(href="http://#{current_shop}/admin/", target = 'blank')
-                                            i.icon-home 
+                                            i.icon-home
                                             | &nbsp;Store Admin
                                     li.divider
                                     li
-                                        a(href="/plans")
+                                        a(href="/shopify/plans")
                                             i.icon-shopping-cart
-                                            | &nbsp;Plans  
+                                            | &nbsp;Plans
                                     li
-                                        a(href="/faq")
-                                            i.icon-pencil 
+                                        a(href="/shopify/faq")
+                                            i.icon-pencil
                                             | &nbsp;FAQ
                                     li.divider
                                     li
-                                        a(href="/logout")
-                                            i.icon-off 
-                                            | &nbsp;Logout   
+                                        a(href="/shopify/logout")
+                                            i.icon-off
+                                            | &nbsp;Logout
 
     div.container
         block body
         footer
-
-            

@@ -7,7 +7,7 @@ block body
         console.log('store?')
         }
     div.row(style="background-color:#fff")
-        img(src="/img/ajax-loader.gif", id="gif",class="loader-gif", style="margin-top: 35%; margin-left: 50%; width:17px;height:17px")
+        img(src="/shopify/img/ajax-loader.gif", id="gif",class="loader-gif", style="margin-top: 35%; margin-left: 50%; width:17px;height:17px")
         script(type="text/javascript").
             function addClass(id,new_class){
             var i,n=0;
@@ -34,7 +34,7 @@ block body
                 p(style="display:inline; margin-left: 10px") * Store is online only.
                 br
                 center
-                    p - or - 
+                    p - or -
                 script(type="text/javascript").
                     function toggleDisabled(_checked) {
                     document.getElementById('i1').disabled = _checked ? true : false;
@@ -44,11 +44,11 @@ block body
                     document.getElementById('i5').disabled = _checked ? true : false;
                     }
                 label Enter your physical store address:
-    
+
                 label Street
                 input(type="text",id="i1",name="street", placeholder="example: 100 Kip Street",size=50, required)
                 br
-                label City 
+                label City
                 input(type="text",id="i2",name="city", placeholder="example: New York",size=50, required)
                 br
                 label State
@@ -64,7 +64,7 @@ block body
                 input(type="submit", class="btn btn-primary btn-large", style="margin-left:150px" id="submit_button",value="Submit")
         div.span(style="position:fixed;top: 40%;left: 50%;transform: translate(-50%, -50%);", hidden=!storeExists)
             h3.
-                Keep all of your products and inventory up-to-date on Kip! 
+                Keep all of your products and inventory up-to-date on Kip!
             form(action='/shopify/add',id='kipform',method='post', style="margin-top:50px")
                 input(type="hidden",id="exists", name="exists", value='true')
                 input(type="submit", onclick="addClass('gif','visible')",class="btn btn-primary btn-large", style="margin: 0 auto", id="submit_button",value="Update my Inventory!")

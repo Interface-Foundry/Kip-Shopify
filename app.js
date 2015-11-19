@@ -127,7 +127,7 @@ app.get('/login', function(req, res) {
         shop = undefined;
     }
     if (req.session.shopify) {
-        res.redirect(req.originalUrl.replace(/login$/, '') + "shopify");
+        res.redirect('/');
     } else if (shop != undefined) {
         //redirect to auth
         res.redirect(req.originalUrl + "authenticate");
