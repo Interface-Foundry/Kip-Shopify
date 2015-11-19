@@ -1,13 +1,12 @@
 extends layout
 block body
-    header.jumbotron
     -storeExists = storeExists
     -homelink = JSON.stringify(homelink)
     script(type="text/javascript").
         function check(storeExists) {
         console.log('store?')
         }
-    div.row
+    div.row(style="background-color:#fff")
         div.span(style="position:fixed;top: 50%;left: 50%;transform: translate(-50%, -50%);", hidden=storeExists)
             form(action='/shopify/add',method='post', style="margin-top:50px")
                 br

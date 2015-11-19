@@ -4,24 +4,25 @@ html
     title= title
     meta(name="viewport", content='width=device-width, initial-scale=1')
     link(href='/favicon.ico', rel='shortcut icon', type='image/x-icon')
-    link(rel='stylesheet', href='/shopify/stylesheets/twitter.css',type='text/javascript')
-    link(rel='stylesheet', href='/shopify/stylesheets/imports.css',type='text/javascript')
-    link(rel='stylesheet', href='/shopify/stylesheets/shopify.css',type='text/javascript')
-    link(rel='stylesheet', href='/shopify/stylesheets/shopify_buttons.css',type='text/javascript')
+    link(rel='stylesheet', href='/shopify/stylesheets/fonts.css',type='text/css')
+    link(rel='stylesheet', href='/shopify/stylesheets/normalize.min.css',type='text/css')
+    link(rel='stylesheet', href='/shopify/stylesheets/bootstrap.min.css',type='text/css')
+    link(rel='stylesheet', href='/shopify/stylesheets/skeleton.min.css',type='text/css')
     link(rel='stylesheet', href='/shopify/stylesheets/style.css',type='text/javascript')
-    script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
+    link(rel='stylesheet', href='/shopify/stylesheets/simpleSearch.css',type='text/css')
+    script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js")
     script(type="text/javascript", src="/shopify/javascripts/bootstrap.js")
     link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Open+Sans")
   body
     div.navbar.navbar-fixed-top
         div.navbar-inner
-            div.container
+            div.container(style="margin-left: 5% ;margin-top: 10px, line-height: 10px")
                 a(href="http://www.kipsearch.com", class="brand")
                     img(src="/img/kip_logo_purp.svg", class="kip-logo", style="width:100px;height:100px")
-                a(href="http://www.kipsearch.com", class="brand", style="margin-top:50px") Search for clothes in IRL stores around you
+                a(href="http://www.kipsearch.com", class="h1 Top-Tag", style="font-size:22px;display:block;margin-left: 10px") Search for clothes in IRL stores around you
                 - if (typeof(current_shop) != 'undefined')
                     div.nav-collapse
-                        ul.nav.pull-right
+                        ul.nav.pull-right(style="margin-top:-5%")
                             li.dropdown
                                 a.shop_name.dropdown-toggle(data-toggle='dropdown', href="#" )= current_shop
                                 ul.dropdown-menu

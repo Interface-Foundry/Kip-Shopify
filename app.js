@@ -1,4 +1,6 @@
-//TODO: Loading bar
+//TODO: 
+//FireFox issue
+//Loading bar
 //
 //
 
@@ -42,6 +44,8 @@ app.use(cookieParser());
 app.use(session({
     secret: 'zergrushkekeke',
     store: new MongoStore({
+        //***Production: This must be change to: 
+        //mongooseConnection: 'mongodb://flareon.kipapp.co/foundry'
         url: 'mongodb://pikachu.kipapp.co/foundry'
     }),
     resave: true,

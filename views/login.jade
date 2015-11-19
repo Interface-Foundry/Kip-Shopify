@@ -1,14 +1,15 @@
 extends layout
 block body
-  div(style="width:88%; margin:0 auto; margin-top: 200px")
-    h1(style="margin-left:10%;display:inline-block;white-space:wrap").
+  div(style="width:88%; margin:0 auto; margin-top: 200px;background-color:#fff")
+    h4(style="margin-left:10%;display:inline-block;white-space:wrap").
       Join Kip to make your items accessible to millions of users.
   div(style="width:360px; margin:0 auto; margin-top: 60px")
     form(method="POST", action="/shopify/login/authenticate", class="form-search")
-      div(style="margin:0;padding:0;display:inline")
-        h3 Enter your store name:
+      div(style="margin:0 auto;padding:0;display:inline")
+        h7 Enter your store name:
         br
-        input(type="text", name="shop", id="shop", placeholder="my-store-1", class="btn-large",style="width:40%")
+        br
+        input(type="text", name="shop", id="shop", placeholder="my-store-1", class="btn-large",style="width:50%")
         br
         br
         input(type="submit", value="Kip it!", class="btn btn-primary btn-large" style="margin:0 auto;width:49%")
