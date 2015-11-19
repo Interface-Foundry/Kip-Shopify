@@ -1,4 +1,3 @@
-//TODO: 
 //Loading bar
 
 var express = require('express'),
@@ -10,19 +9,19 @@ var bodyParser = require('body-parser');
 var path = require('path')
 var apiKey, secret;
 var persistentKeys = {};
-var db = require('../IF-root/components/IF_schemas/db')
+var db = require('./IF_schemas/db')
 var mongoose = require('mongoose')
 var ObjectId = mongoose.Types.ObjectId;
 var _ = require('lodash');
 var async = require('async');
 var Promise = require('bluebird');
-var uniquer = require('../IF-root/IF_services/uniquer');
-var tagParser = require('../IF-root/IF_services/IF_forage/tagParser');
-var upload = require('../IF-root/IF_services/upload')
+var uniquer = require('./uniquer');
+var tagParser = require('./tagParser');
+var upload = require('./upload')
 var request = require('request')
 var session = require('express-session')
 var MongoStore = require('connect-mongo')(session);
-var config = require('../IF-root/config')
+var config = require('./config/')
 var keys = require('./config.json');
 apiKey = keys.apiKey;
 secret = keys.secret;
@@ -41,9 +40,9 @@ app.use(cookieParser());
 app.use(session({
     secret: 'zergrushkekeke',
     store: new MongoStore({
-        //***Production: This must be change to: 
+        //***Production: This must be change to:
         //mongooseConnection: 'mongodb://flareon.kipapp.co/foundry'
-        url: 'mongodb://pikachu.kipapp.co/foundry'
+        url: config.mongodb.url
     }),
     resave: true,
     saveUninitialized: true
@@ -108,11 +107,11 @@ app.get('/', function(req, res) {
         })
     } else {
         console.log('session is not valid yet, we need some authentication !')
-        if (shop !== undefined)
-            res.redirect('/shopify/login/authenticate?shop=' + shop);
-        else {
-            // console.log('REQ.ORIGINALURL: ',req.originalUrl)
-            res.redirect(req.originalUrl + 'login')
+        if (shop !== undefined) {
+          debugger;
+            res.redirect('/login/authenticate?shop=' + shop);
+        } else {
+            res.redirect('/login')
         }
 
     }
@@ -128,10 +127,10 @@ app.get('/login', function(req, res) {
         shop = undefined;
     }
     if (req.session.shopify) {
-        res.redirect("/shopify");
+        res.redirect(req.originalUrl.replace(/login$/, '') + "shopify");
     } else if (shop != undefined) {
         //redirect to auth
-        res.redirect("/shopify/login/authenticate");
+        res.redirect(req.originalUrl + "authenticate");
         console.log('181')
             // authenticate(req,res)
     } else {
@@ -166,7 +165,7 @@ function authenticate(req, res) {
     }
 }
 
-app.get('/shopify/login/finalize', function(req, res) {
+app.get('/login/finalize', function(req, res) {
     console.log('/login/finalize')
     params = req.query;
     req.session.shopify = params;
@@ -181,7 +180,7 @@ app.get('/shopify/login/finalize', function(req, res) {
     session = nodify.createSession(req.query.shop, apiKey, secret, params);
     if (session.valid()) {
         console.log('session is valid!')
-        res.redirect("/shopify");
+        res.redirect("/");
     } else {
         res.send("Could not finalize");
     }
@@ -190,7 +189,7 @@ app.get('/shopify/login/finalize', function(req, res) {
 app.get('/login/finalize/token', function(req, res) {
     console.log('/login/finalize/token')
     if (!req.query.code)
-        return res.redirect("/shopify/login?error=Invalid%20connection.%20Please Retry")
+        return res.redirect("/login?error=Invalid%20connection.%20Please Retry")
     session.requestPermanentAccessToken(req.query.code, function onPermanentAccessToken(token) {
         console.log('Authenticated on shop <', req.query.shop, '/', session.store_name, '> with token <', token, '>')
         persistentKeys[session.store_name] = token;
@@ -215,18 +214,17 @@ app.get('/login/finalize/token', function(req, res) {
                 s.save(function(err, saved) {
                     if (err) console.log(err)
                     console.log('Shopify user saved: ', saved);
-                    return res.redirect('/shopify')
+                    return res.redirect('/')
                 })
             } else if (match) {
-                // console.log('Exists!!: ',match)
-                res.redirect('/shopify')
+                res.redirect('/')
             }
         })
     })
 })
 
 app.post('/add', function(req, res) {
-    
+
     var data = {
         shop: undefined,
         key: undefined,
@@ -292,9 +290,9 @@ app.post('/add', function(req, res) {
     } else {
         console.log('session is not valid yet, we need some authentication !')
         if (shop)
-            res.redirect('/shopify/login/authenticate?shop=' + shop);
+            res.redirect('/login/authenticate?shop=' + shop);
         else
-            res.redirect('/shopify/login')
+            res.redirect('/login')
     }
 });
 
@@ -437,7 +435,7 @@ function getParent(data) {
                 console.log('150: ', err)
             }
             if (!match) {
-                //Create new parent store 
+                //Create new parent store
                 var n = new db.Landmark();
                 n.world = true;
                 n.tel = data.tel;

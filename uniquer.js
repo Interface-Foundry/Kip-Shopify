@@ -6,7 +6,7 @@
          trim: true
      }),
      q = require('q'),
-     db = require('../IF-root/components/IF_schemas/db'),
+     db = require('./IF_schemas/db'),
      async = require('async');
 
  module.exports = {
