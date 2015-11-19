@@ -51,6 +51,11 @@ app.use(session({
 // app.use(require('prerender-node').set('prerenderServiceUrl', 'http://127.0.1.1:4000'));
 app.use(require('prerender-node').set('protocol', 'https'));
 
+app.get('/healthcheck', function(req, res) {
+  console.log('healthcheck');
+  res.send(200);
+})
+
 // Routes
 app.get('/', function(req, res) {
     var shop = undefined,
