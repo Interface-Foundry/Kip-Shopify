@@ -42,7 +42,7 @@ app.use(session({
     store: new MongoStore({
         //***Production: This must be change to:
         //mongooseConnection: 'mongodb://flareon.kipapp.co/foundry'
-        mongooseConnection: 'mongodb://flareon.kipapp.co/foundry'
+         url: config.mongodb.url
     }),
     resave: true,
     saveUninitialized: true
