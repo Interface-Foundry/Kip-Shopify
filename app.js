@@ -152,7 +152,7 @@ function authenticate(req, res) {
             scope: {
                 products: "read"
             },
-            uriForTemporaryToken: "https://" + req.headers.host + "/shopify/login/finalize/token",
+            uriForTemporaryToken: "https://kipsearch.com/shopify/login/finalize/token",
             onAskToken: function onToken(err, url) {
                 if (err) console.log('131: ', err)
                 console.log('URL: ', url)
