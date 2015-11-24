@@ -115,7 +115,7 @@ app.get('/', function(req, res) {
         if (shop !== undefined) {
             res.redirect('https://kipapp.co/shopify/login/authenticate?shop=' + shop);
         } else {
-            res.redirect('/login')
+            res.redirect('https://kipapp.co/shopify/login')
         }
 
     }
@@ -134,7 +134,8 @@ app.get('/login', function(req, res) {
         res.redirect('/');
     } else if (shop != undefined) {
         //redirect to auth
-        res.redirect(req.originalUrl + "authenticate");
+        console.log('req.originalUrl',req.originalUrl)
+        res.redirect("https://kipapp.co/shopify/login/authenticate");
         console.log('181')
             // authenticate(req,res)
     } else {
@@ -165,7 +166,7 @@ function authenticate(req, res) {
         });
     } else {
         console.log('no shop, go login')
-        res.redirect('/login');
+        res.redirect('https://kipapp.co/shopify/login');
     }
 }
 
@@ -184,7 +185,7 @@ app.get('/login/finalize', function(req, res) {
     session = nodify.createSession(req.query.shop, apiKey, secret, params);
     if (session.valid()) {
         console.log('session is valid!')
-        res.redirect("/");
+        res.redirect("https://kipapp.co/shopify");
     } else {
         res.send("Could not finalize");
     }
@@ -221,7 +222,7 @@ app.get('/login/finalize/token', function(req, res) {
                     return res.redirect('/')
                 })
             } else if (match) {
-                res.redirect('/')
+                res.redirect('https://kipapp.co/shopify/login')
             }
         })
     })
@@ -294,9 +295,9 @@ app.post('/add', function(req, res) {
     } else {
         console.log('session is not valid yet, we need some authentication !')
         if (shop)
-            res.redirect('/login/authenticate?shop=' + shop);
+            res.redirect('https://kipapp.co/shopify/login/authenticate?shop=' + shop);
         else
-            res.redirect('/login')
+            res.redirect('https://kipapp.co/shopify/login')
     }
 });
 
