@@ -113,7 +113,7 @@ app.get('/', function(req, res) {
     } else {
         console.log('session is not valid yet, we need some authentication !')
         if (shop !== undefined) {
-            res.redirect('/login/authenticate?shop=' + shop);
+            res.redirect('https://kipapp.co/shopify/login/authenticate?shop=' + shop);
         } else {
             res.redirect('/login')
         }
