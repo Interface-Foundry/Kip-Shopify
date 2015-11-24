@@ -219,7 +219,7 @@ app.get('/login/finalize/token', function(req, res) {
                 s.save(function(err, saved) {
                     if (err) console.log(err)
                     console.log('Shopify user saved: ', saved);
-                    return res.redirect('/')
+                    return res.redirect('https://kipapp.co/shopify')
                 })
             } else if (match) {
                 res.redirect('https://kipapp.co/shopify/login')
@@ -307,7 +307,7 @@ app.get('/logout', function(req, res) {
         req.session.shopify = null;
     }
     console.log('Logged out!')
-    res.redirect('/');
+    res.redirect('https://kipapp.co/shopify');
 });
 
 function processData(data, session, res) {
